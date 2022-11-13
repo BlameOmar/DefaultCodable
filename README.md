@@ -1,5 +1,5 @@
 # DefaultCodable
-![Swift 5.1](https://img.shields.io/badge/Swift-5.1-orange.svg)
+![Swift 5.7](https://img.shields.io/badge/Swift-5.7-orange.svg)
 [![Swift Package Manager](https://img.shields.io/badge/spm-compatible-brightgreen.svg?style=flat)](https://swift.org/package-manager)
 [![Twitter: @gonzalezreal](https://img.shields.io/badge/twitter-@gonzalezreal-blue.svg?style=flat)](https://twitter.com/gonzalezreal)
 
