@@ -82,15 +82,12 @@ It provides an empty instance of a `Dictionary`.
 ### `True` and `False`
 Provide `true` and `false` respectively for `Bool` properties.
 
-### `Zero` and `One`
-Provide `0` and `1` respectively for `Int` properties.
+### `Zero`, `One`, and `MinusOne`
+Provide `0`, `1`, and `-1` respectively for `Numeric` properties.
 
 ### `FirstCase`
 It provides the first case of an `enum` type as the default value. The `enum` must implement the `CaseIterable`
 protocol.
-
-### `ZeroDouble`
-Provide `0` for `Double` properties.
 
 ## Default values for custom types
 Your custom type must implement the `DefaultValueProvider` protocol to be compatible with the `@Default` property

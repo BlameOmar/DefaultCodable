@@ -13,7 +13,7 @@ final class DefaultTests: XCTestCase {
         @Default<EmptyDictionary> var entities: [String: String]
         @Default<True> var isFoo: Bool
         @Default<FirstCase> var type: ThingType
-        @Default<ZeroDouble> var floatingPoint: Double
+        @Default<Zero> var floatingPoint: Double
 
         init(
             name: String,

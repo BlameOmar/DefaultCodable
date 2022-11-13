@@ -26,14 +26,14 @@ public enum FirstCase<A>: DefaultValueProvider where A: Codable, A: Equatable, A
     public static var `default`: A { A.allCases.first! }
 }
 
-public enum Zero: DefaultValueProvider {
-    public static let `default` = 0
+public enum Zero<T: Numeric & Codable>: DefaultValueProvider {
+    public static var `default`: T { 0 }
 }
 
-public enum One: DefaultValueProvider {
-    public static let `default` = 1
+public enum One<T: Numeric & Codable>: DefaultValueProvider {
+    public static var `default`: T { 1 }
 }
 
-public enum ZeroDouble: DefaultValueProvider {
-    public static let `default`: Double = 0
+public enum MinusOne<T: SignedNumeric & Codable>: DefaultValueProvider {
+    public static var `default`: T { -1 }
 }
