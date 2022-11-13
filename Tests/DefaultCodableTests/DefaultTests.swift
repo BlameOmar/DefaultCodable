@@ -167,12 +167,4 @@ final class DefaultTests: XCTestCase {
         // then
         XCTAssertEqual(expected, result)
     }
-
-    static var allTests = [
-        ("testValueDecodesToActualValue", testValueDecodesToActualValue),
-        ("testNullDecodesToDefaultValue", testNullDecodesToDefaultValue),
-        ("testNotPresentValueDecodesToDefaultValue", testNotPresentValueDecodesToDefaultValue),
-        ("testTypeMismatchThrows", testTypeMismatchThrows),
-        ("testDefaultValueEncodesToNothing", testDefaultValueEncodesToNothing),
-    ]
 }
