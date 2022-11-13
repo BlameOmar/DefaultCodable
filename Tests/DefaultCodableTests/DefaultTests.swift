@@ -14,21 +14,22 @@ final class DefaultTests: XCTestCase {
         @Default<True> var isFoo: Bool
         @Default<FirstCase> var type: ThingType
         @Default<Zero> var floatingPoint: Double
+        @Default<Nil> var favoriteFood: String?
 
         init(
             name: String,
-            description: String = "",
-            entities: [String: String] = [:],
-            isFoo: Bool = true,
-            type: ThingType = .foo,
-            floatingPoint: Double = 0
+            description: String? = nil,
+            entities: [String: String]? = nil,
+            isFoo: Bool? = nil,
+            type: ThingType? = nil,
+            floatingPoint: Double? = nil
         ) {
             self.name = name
-            self.description = description
-            self.entities = entities
-            self.isFoo = isFoo
-            self.type = type
-            self.floatingPoint = floatingPoint
+            self._description = .init(optionalValue: description)
+            self._entities = .init(optionalValue: entities)
+            self._isFoo = .init(optionalValue: isFoo)
+            self._type = .init(optionalValue: type)
+            self._floatingPoint =  .init(optionalValue: floatingPoint)
         }
     }
 
@@ -63,11 +64,7 @@ final class DefaultTests: XCTestCase {
         let json = """
         {
           "name": "Any name",
-          "description": null,
-          "entities": null,
-          "isFoo": null,
-          "type": null,
-          "floatingPoint": null
+          "favoriteFood": null
         }
         """.data(using: .utf8)!
 
@@ -117,7 +114,6 @@ final class DefaultTests: XCTestCase {
         XCTAssertThrowsError(try JSONDecoder().decode(Thing.self, from: json))
     }
 
-    @available(OSX 10.13, iOS 11.0, watchOS 4.0, tvOS 11.0, *)
     func testValueEncodesToActualValue() throws {
         // given
         let thing = Thing(
@@ -166,5 +162,100 @@ final class DefaultTests: XCTestCase {
 
         // then
         XCTAssertEqual(expected, result)
+    }
+    
+    func testDecodingNullForNonOptionalFieldFails() {
+        struct DeskConfiguration: Codable {
+            @Default<One> var numberOfMonitors: Int
+        }
+
+        let json = #"{"numberOfMonitors": null}"#.data(using: .utf8)!
+
+        XCTAssertThrowsError(try JSONDecoder().decode(DeskConfiguration.self, from: json))
+    }
+    
+    func testAssignment() {
+        struct DeskConfiguration: Codable {
+            @Default<One> var numberOfMonitors: Int
+        }
+        
+        var configuration = DeskConfiguration()
+        XCTAssertEqual(configuration.numberOfMonitors, 1)
+        
+        configuration.numberOfMonitors = 2
+        XCTAssertEqual(configuration.numberOfMonitors, 2)
+
+        configuration.$numberOfMonitors = nil
+        XCTAssertEqual(configuration.numberOfMonitors, 1)
+    }
+}
+
+final class OptionalWithDefaultTests: XCTestCase {
+    let jsonDecoder = JSONDecoder()
+    var jsonEncoder: JSONEncoder {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
+        return encoder
+    }
+    
+    struct FavoriteThings: Codable {
+        @Default<Nil> var favoriteBook: String?
+        @Default<Nil> var favoriteNumber: Int?
+    }
+    
+    func testUnspecifiedFieldsDecodeToDefault() throws {
+        let json = "{}".data(using: .utf8)!
+        let favorites = try jsonDecoder.decode(FavoriteThings.self, from: json)
+
+        XCTAssertEqual(favorites.favoriteBook, nil)
+        XCTAssertEqual(favorites.favoriteNumber, nil)
+    }
+    
+    func testNullFieldsDecodeToNil() throws {
+        let json = """
+        {
+            "favoriteBook": null,
+            "favoriteNumber": null
+        }
+        """.data(using: .utf8)!
+        let favorites = try jsonDecoder.decode(FavoriteThings.self, from: json)
+
+        XCTAssertEqual(favorites.favoriteBook, nil)
+        XCTAssertEqual(favorites.favoriteNumber, nil)
+    }
+    
+    func testDecodesNonNullValues() throws {
+        let json = """
+        {
+            "favoriteBook": "The Hitchhiker's Guide to the Galaxy",
+            "favoriteNumber": 42
+        }
+        """.data(using: .utf8)!
+        let favorites = try jsonDecoder.decode(FavoriteThings.self, from: json)
+
+        XCTAssertEqual(favorites.favoriteBook, "The Hitchhiker's Guide to the Galaxy")
+        XCTAssertEqual(favorites.favoriteNumber, 42)
+    }
+    
+    func testRoundTripWithUnspecifiedFields() throws {
+        let expected = "{}".data(using: .utf8)!
+        let favorites = try jsonDecoder.decode(FavoriteThings.self, from: expected)
+        let json = try jsonEncoder.encode(favorites)
+        XCTAssertEqual(expected, json)
+    }
+    
+    func testRoundTripWithExplicitlyNullFields() throws {
+        let expected = #"{"favoriteBook":null,"favoriteNumber":null}"#.data(using: .utf8)!
+        let favorites = try jsonDecoder.decode(FavoriteThings.self, from: expected)
+        let json = try jsonEncoder.encode(favorites)
+        XCTAssertEqual(expected, json)
+    }
+    
+    func testRoundTripWithNonNullFields() throws {
+        let expected = #"{"favoriteBook":"The Hitchhiker's Guide to the Galaxy","favoriteNumber":42}"#
+            .data(using: .utf8)!
+        let favorites = try jsonDecoder.decode(FavoriteThings.self, from: expected)
+        let json = try jsonEncoder.encode(favorites)
+        XCTAssertEqual(expected, json)
     }
 }

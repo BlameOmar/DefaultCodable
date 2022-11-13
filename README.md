@@ -3,7 +3,7 @@
 [![Swift Package Manager](https://img.shields.io/badge/spm-compatible-brightgreen.svg?style=flat)](https://swift.org/package-manager)
 
 **DefaultCodable** is a Swift µpackage that provides a convenient way to define default values in `Codable` types for
-properties that are **not present or have a `nil` value**.
+properties that are not present.
 
 ## Usage
 Consider a hypothetical model for Apple products., in which only the property `name` is *required*.
@@ -58,7 +58,7 @@ The resulting `Product` instance is using the default values for those propertie
 ```
 
 If you encode the result back, the resulting JSON will be the same as the one we started with. The `@Default` property
-wrapper will not encode the value if it is equal to the default value.
+wrapper will not encode the value if an explicit value is not set.
 
 The `@Default` property wrapper takes a `DefaultValueProvider` as a parameter. This type provides the default value when
 a value is not present or is `nil`.
@@ -84,6 +84,9 @@ Provide `true` and `false` respectively for `Bool` properties.
 
 ### `Zero`, `One`, and `MinusOne`
 Provide `0`, `1`, and `-1` respectively for `Numeric` properties.
+
+### `Nil`
+Provides `nil` for optional properties.
 
 ### `FirstCase`
 It provides the first case of an `enum` type as the default value. The `enum` must implement the `CaseIterable`

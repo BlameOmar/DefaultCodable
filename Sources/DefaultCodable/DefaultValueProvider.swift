@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol DefaultValueProvider {
-    associatedtype Value: Equatable & Codable
+    associatedtype Value: Codable
 
     static var `default`: Value { get }
 }
@@ -36,4 +36,8 @@ public enum One<T: Numeric & Codable>: DefaultValueProvider {
 
 public enum MinusOne<T: SignedNumeric & Codable>: DefaultValueProvider {
     public static var `default`: T { -1 }
+}
+
+public enum Nil<T: Codable>: DefaultValueProvider {
+    public static var `default`: T?  { nil }
 }
